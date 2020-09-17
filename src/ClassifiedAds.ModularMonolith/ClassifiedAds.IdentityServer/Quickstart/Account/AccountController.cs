@@ -415,7 +415,7 @@ namespace IdentityServer4.Quickstart.UI
             _emailMessageService.AddOrUpdate(new EmailMessage
             {
                 From = string.Empty,
-                To = user.Email,
+                Tos = user.Email,
                 Subject = "Confirmation Email",
                 Body = string.Format("Confirmation Email: {0}", confirmationEmail),
             });
@@ -465,7 +465,7 @@ namespace IdentityServer4.Quickstart.UI
                     _emailMessageService.AddOrUpdate(new EmailMessage
                     {
                         From = string.Empty,
-                        To = user.Email,
+                        Tos = user.Email,
                         Subject = "Forgot Password",
                         Body = string.Format("Reset Url: {0}", resetUrl),
                     });

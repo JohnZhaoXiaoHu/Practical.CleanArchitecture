@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ClassifiedAds.Infrastructure.Logging;
 using ClassifiedAds.Modules.Identity.Contracts.Services;
 using ClassifiedAds.Modules.Identity.Repositories;
 using ClassifiedAds.Modules.Identity.Services;
@@ -27,8 +26,6 @@ namespace ClassifiedAds.WebAPI
 
             AppSettings = new AppSettings();
             Configuration.Bind(AppSettings);
-
-            env.UseClassifiedAdsLogger(AppSettings.LoggerOptions);
         }
 
         public IConfiguration Configuration { get; }
@@ -71,11 +68,11 @@ namespace ClassifiedAds.WebAPI
                     .WithHeaders("Content-Type"));
             });
 
-            services.AddAuditLogModule(Configuration["ConnectionStrings:ClassifiedAds"])
-                    .AddIdentityModuleCore(Configuration["ConnectionStrings:ClassifiedAds"])
-                    .AddNotificationModule(Configuration["ConnectionStrings:ClassifiedAds"])
-                    .AddProductModule(Configuration["ConnectionStrings:ClassifiedAds"])
-                    .AddStorageModule(AppSettings.Storage, AppSettings.MessageBroker, Configuration["ConnectionStrings:ClassifiedAds"])
+            services.AddAuditLogModule(AppSettings.ConnectionStrings.ClassifiedAds)
+                    .AddIdentityModuleCore(AppSettings.ConnectionStrings.ClassifiedAds)
+                    .AddNotificationModule(AppSettings.MessageBroker, AppSettings.ConnectionStrings.ClassifiedAds)
+                    .AddProductModule(AppSettings.ConnectionStrings.ClassifiedAds)
+                    .AddStorageModule(AppSettings.Storage, AppSettings.MessageBroker, AppSettings.ConnectionStrings.ClassifiedAds)
                     .AddApplicationServices();
 
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)

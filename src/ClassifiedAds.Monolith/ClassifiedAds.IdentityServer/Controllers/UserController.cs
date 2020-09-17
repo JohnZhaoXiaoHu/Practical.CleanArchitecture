@@ -2,6 +2,7 @@
 using ClassifiedAds.Application.Roles.Queries;
 using ClassifiedAds.Application.Users.Commands;
 using ClassifiedAds.Application.Users.Queries;
+using ClassifiedAds.CrossCuttingConcerns.OS;
 using ClassifiedAds.Domain.Entities;
 using ClassifiedAds.IdentityServer.Models.UserModels;
 using Microsoft.AspNetCore.Identity;
@@ -17,12 +18,16 @@ namespace ClassifiedAds.IdentityServer.Controllers
     {
         private readonly Dispatcher _dispatcher;
         private readonly UserManager<User> _userManager;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public UserController(Dispatcher dispatcher, UserManager<User> userManager, ILogger<UserController> logger)
+        public UserController(Dispatcher dispatcher,
+            UserManager<User> userManager,
+            ILogger<UserController> logger,
+            IDateTimeProvider dateTimeProvider)
         {
             _dispatcher = dispatcher;
             _userManager = userManager;
-
+            _dateTimeProvider = dateTimeProvider;
             logger.LogInformation("UserController");
         }
 
@@ -47,6 +52,7 @@ namespace ClassifiedAds.IdentityServer.Controllers
             if (model.Id != Guid.Empty)
             {
                 user = _dispatcher.Dispatch(new GetUserQuery { Id = model.Id });
+                user.UpdatedDateTime = _dateTimeProvider.OffsetNow;
             }
             else
             {
@@ -102,6 +108,7 @@ namespace ClassifiedAds.IdentityServer.Controllers
 
             var user = _dispatcher.Dispatch(new GetUserQuery { Id = model.Id });
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            user.UpdatedDateTime = _dateTimeProvider.OffsetNow;
             var rs = await _userManager.ResetPasswordAsync(user, token, model.ConfirmPassword);
 
             if (rs.Succeeded)

@@ -14,6 +14,6 @@ namespace ClassifiedAds.Modules.AuditLog.Contracts.DTOs
 
         public string Log { get; set; }
 
-        public DateTime CreatedDateTime { get; set; }
+        public DateTimeOffset CreatedDateTime { get; set; }
     }
 }

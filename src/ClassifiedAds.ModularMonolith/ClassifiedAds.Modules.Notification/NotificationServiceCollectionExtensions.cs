@@ -1,7 +1,9 @@
-﻿using ClassifiedAds.Domain.Repositories;
+﻿using ClassifiedAds.Domain.Events;
+using ClassifiedAds.Domain.Repositories;
+using ClassifiedAds.Infrastructure.MessageBrokers;
+using ClassifiedAds.Modules.Notification.Contracts.DTOs;
 using ClassifiedAds.Modules.Notification.Entities;
 using ClassifiedAds.Modules.Notification.Repositories;
-using ClassifiedAds.Modules.Notification.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class NotificationServiceCollectionExtensions
     {
-        public static IServiceCollection AddNotificationModule(this IServiceCollection services, string connectionString, string migrationsAssembly = "")
+        public static IServiceCollection AddNotificationModule(this IServiceCollection services, MessageBrokerOptions messageBrokerOptions, string connectionString, string migrationsAssembly = "")
         {
             services.AddDbContext<NotificationDbContext>(options => options.UseSqlServer(connectionString, sql =>
             {
@@ -23,7 +25,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<IRepository<EmailMessage, Guid>, Repository<EmailMessage, Guid>>()
                 .AddScoped<IRepository<SmsMessage, Guid>, Repository<SmsMessage, Guid>>();
 
+            DomainEvents.RegisterHandlers(Assembly.GetExecutingAssembly(), services);
+
             services.AddMessageHandlers(Assembly.GetExecutingAssembly());
+
+            services.AddMessageBusSender<EmailMessageCreatedEvent>(messageBrokerOptions);
+            services.AddMessageBusSender<SmsMessageCreatedEvent>(messageBrokerOptions);
 
             return services;
         }

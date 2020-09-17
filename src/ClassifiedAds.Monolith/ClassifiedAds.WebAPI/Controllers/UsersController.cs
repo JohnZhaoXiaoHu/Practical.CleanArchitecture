@@ -2,6 +2,7 @@
 using ClassifiedAds.Application;
 using ClassifiedAds.Application.Users.Commands;
 using ClassifiedAds.Application.Users.Queries;
+using ClassifiedAds.CrossCuttingConcerns.OS;
 using ClassifiedAds.Domain.Entities;
 using ClassifiedAds.WebAPI.Models.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -24,12 +25,18 @@ namespace ClassifiedAds.WebAPI.Controllers
         private readonly Dispatcher _dispatcher;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public UsersController(Dispatcher dispatcher, UserManager<User> userManager, ILogger<UsersController> logger, IMapper mapper)
+        public UsersController(Dispatcher dispatcher,
+            UserManager<User> userManager,
+            ILogger<UsersController> logger,
+            IMapper mapper,
+            IDateTimeProvider dateTimeProvider)
         {
             _dispatcher = dispatcher;
             _userManager = userManager;
             _mapper = mapper;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         [HttpGet]
@@ -95,6 +102,7 @@ namespace ClassifiedAds.WebAPI.Controllers
             user.LockoutEnabled = model.LockoutEnabled;
             user.LockoutEnd = model.LockoutEnd;
             user.AccessFailedCount = model.AccessFailedCount;
+            user.UpdatedDateTime = _dateTimeProvider.OffsetNow;
 
             _ = await _userManager.UpdateAsync(user);
 
@@ -111,6 +119,8 @@ namespace ClassifiedAds.WebAPI.Controllers
             User user = _dispatcher.Dispatch(new GetUserQuery { Id = id });
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            user.UpdatedDateTime = _dateTimeProvider.OffsetNow;
             var rs = await _userManager.ResetPasswordAsync(user, token, model.Password);
 
             if (rs.Succeeded)

@@ -195,7 +195,11 @@
 <details>
   <summary><b>Message Broker</b></summary>
   
-  - Open [ClassifiedAds.WebMVC/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.WebMVC/appsettings.json), [ClassifiedAds.WebAPI/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.WebAPI/appsettings.json), [ClassifiedAds.BackgroundServer/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.BackgroundServer/appsettings.json) and jump to **MessageBroker** section.
+  - Open below files and jump to **MessageBroker** section:
+    + [ClassifiedAds.IdentityServer/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.IdentityServer/appsettings.json)
+    + [ClassifiedAds.WebMVC/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.WebMVC/appsettings.json)
+    + [ClassifiedAds.WebAPI/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.WebAPI/appsettings.json)
+    + [ClassifiedAds.BackgroundServer/appsettings.json](/src/ClassifiedAds.Monolith/ClassifiedAds.BackgroundServer/appsettings.json)
     ```js
     "MessageBroker": {
       "Provider": "RabbitMQ",
@@ -211,10 +215,18 @@
         "UserName": "guest",
         "Password": "guest",
         "ExchangeName": "amq.direct",
-        "RoutingKey_FileUploaded": "classifiedadds_fileuploaded",
-        "RoutingKey_FileDeleted": "classifiedadds_filedeleted",
-        "QueueName_FileUploaded": "classifiedadds_fileuploaded",
-        "QueueName_FileDeleted": "classifiedadds_filedeleted"
+        "RoutingKeys": {
+          "FileUploadedEvent": "classifiedadds_fileuploaded",
+          "FileDeletedEvent": "classifiedadds_filedeleted",
+          "EmailMessageCreatedEvent": "classifiedadds_emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds_smscreated"
+        },
+        "QueueNames": {
+          "FileUploadedEvent": "classifiedadds_fileuploaded",
+          "FileDeletedEvent": "classifiedadds_filedeleted",
+          "EmailMessageCreatedEvent": "classifiedadds_emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds_smscreated"
+        }
       }
     }
     ```
@@ -225,8 +237,12 @@
       "Provider": "Kafka",
       "Kafka": {
         "BootstrapServers": "localhost:9092",
-        "Topic_FileUploaded": "classifiedadds_fileuploaded",
-        "Topic_FileDeleted": "classifiedadds_filedeleted"
+        "Topics": {
+          "FileUploadedEvent": "classifiedadds_fileuploaded",
+          "FileDeletedEvent": "classifiedadds_filedeleted",
+          "EmailMessageCreatedEvent": "classifiedadds_emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds_smscreated"
+        },
       }
     }
     ```
@@ -237,8 +253,12 @@
       "Provider": "AzureQueue",
       "AzureQueue": {
         "ConnectionString": "xxx",
-        "QueueName_FileUploaded": "classifiedadds-fileuploaded",
-        "QueueName_FileDeleted": "classifiedadds-filedeleted"
+        "QueueNames": {
+          "FileUploadedEvent": "classifiedadds-fileuploaded",
+          "FileDeletedEvent": "classifiedadds-filedeleted",
+          "EmailMessageCreatedEvent": "classifiedadds-emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds-smscreated"
+        }
       }
     }
     ```
@@ -249,8 +269,12 @@
       "Provider": "AzureServiceBus",
       "AzureServiceBus": {
         "ConnectionString": "xxx",
-        "QueueName_FileUploaded": "classifiedadds_fileuploaded",
-        "QueueName_FileDeleted": "classifiedadds_filedeleted"
+        "QueueNames": {
+          "FileUploadedEvent": "classifiedadds_fileuploaded",
+          "FileDeletedEvent": "classifiedadds_filedeleted",
+          "EmailMessageCreatedEvent": "classifiedadds_emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds_smscreated"
+        }
       }
     }
     ```
@@ -262,8 +286,12 @@
       "AzureEventGrid": {
         "DomainEndpoint": "https://xxx.xxx-1.eventgrid.azure.net/api/events",
         "DomainKey": "xxxx",
-        "Topic_FileUploaded": "classifiedadds_fileuploaded",
-        "Topic_FileDeleted": "classifiedadds_filedeleted"
+        "Topics": {
+          "FileUploadedEvent": "classifiedadds_fileuploaded",
+          "FileDeletedEvent": "classifiedadds_filedeleted"
+          "EmailMessageCreatedEvent": "classifiedadds_emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds_smscreated"
+        }
       }
     }
     ```
@@ -274,11 +302,19 @@
       "Provider": "AzureEventHub",
       "AzureEventHub": {
         "ConnectionString": "Endpoint=sb://xxx.servicebus.windows.net/;SharedAccessKeyName=xxx;SharedAccessKey=xxx",
-        "Hub_FileUploaded": "classifiedadds_fileuploaded",
-        "Hub_FileDeleted": "classifiedadds_filedeleted",
+        "Hubs": {
+          "FileUploadedEvent": "classifiedadds_fileuploaded",
+          "FileDeletedEvent": "classifiedadds_filedeleted",
+          "EmailMessageCreatedEvent": "classifiedadds_emailcreated",
+          "SmsMessageCreatedEvent": "classifiedadds_smscreated"
+        },
         "StorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=xxx;AccountKey=xxx;EndpointSuffix=core.windows.net",
-        "StorageContainerName_FileUploaded": "eventhub-fileuploaded",
-        "StorageContainerName_FileDeleted": "eventhub-filedeleted"
+        "StorageContainerNames": {
+          "FileUploadedEvent": "eventhub-fileuploaded",
+          "FileDeletedEvent": "eventhub-filedeleted",
+          "EmailMessageCreatedEvent": "eventhub-emailcreated",
+          "SmsMessageCreatedEvent": "eventhub-smscreated"
+        }
       }
     }
     ```

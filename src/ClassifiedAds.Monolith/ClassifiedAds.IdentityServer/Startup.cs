@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using ClassifiedAds.Application.EmailMessages.DTOs;
+using ClassifiedAds.Application.SmsMessages.DTOs;
 using ClassifiedAds.Domain.Entities;
 using ClassifiedAds.IdentityServer.ConfigurationOptions;
 using IdentityServer4;
@@ -33,6 +35,8 @@ namespace ClassifiedAds.IdentityServer
             services.AddControllersWithViews();
 
             services.AddCors();
+
+            services.AddDateTimeProvider();
 
             services.AddPersistence(AppSettings.ConnectionStrings.ClassifiedAds)
                     .AddDomainServices()
@@ -118,6 +122,9 @@ namespace ClassifiedAds.IdentityServer
                     options.AppSecret = AppSettings.ExternalLogin.Facebook.AppSecret;
                 });
             }
+
+            services.AddMessageBusSender<EmailMessageCreatedEvent>(AppSettings.MessageBroker);
+            services.AddMessageBusSender<SmsMessageCreatedEvent>(AppSettings.MessageBroker);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

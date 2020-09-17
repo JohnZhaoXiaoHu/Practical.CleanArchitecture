@@ -1,6 +1,6 @@
 ﻿using ClassifiedAds.Infrastructure.HealthChecks;
+using ClassifiedAds.Infrastructure.MessageBrokers;
 using ClassifiedAds.Modules.Storage;
-using ClassifiedAds.Modules.Storage.ConfigurationOptions.MessageBroker;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,16 +27,18 @@ namespace ClassifiedAds.Migrator
                 NetworkPortCheck.Wait(Configuration["CheckDependency:Host"], 5);
             }
 
+            var messageBrokerOptions = new MessageBrokerOptions { Provider = "Fake" };
+
             services.AddAuditLogModule(Configuration["ConnectionStrings:ClassifiedAds"],
                 typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
                 .AddIdentityModule(Configuration["ConnectionStrings:ClassifiedAds"],
                 typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
-                .AddNotificationModule(Configuration["ConnectionStrings:ClassifiedAds"],
+                .AddNotificationModule(messageBrokerOptions, Configuration["ConnectionStrings:ClassifiedAds"],
                 typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
                 .AddProductModule(Configuration["ConnectionStrings:ClassifiedAds"],
                 typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
                 .AddStorageModule(new StorageOptions(),
-                new MessageBrokerOptions(),
+                messageBrokerOptions,
                 Configuration["ConnectionStrings:ClassifiedAds"],
                 typeof(Startup).GetTypeInfo().Assembly.GetName().Name)
                 .AddApplicationServices();
